@@ -32,10 +32,6 @@ functions:
           path: room/reservations
           method: post
           cors: true
-          request:
-            parameters:
-              paths:
-                id: true
 
   reservations-get:
     handler: bin/reservations-get
@@ -47,7 +43,7 @@ functions:
           request:
             parameters:
               paths:
-                slug: true
+                id: true
 
   reservations-delete:
     handler: bin/reservations-delete
@@ -58,9 +54,9 @@ functions:
           cors: true
           request:
             parameters:
-              paths:
-                slug: true
+              paths:                
                 id: true
+                reservationId: true
 
 resources:
   Resources:
