@@ -1,0 +1,130 @@
+openapi: 3.0.0
+servers:
+  - description: Dev
+    url: https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev
+info:
+  description: This doc provides the information about the Twitter API
+  version: "1.0.0"
+  title: Twitter Service API
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+paths:
+  /room/{id}/reservations:
+    get:
+      summary: return all reservations for a room
+      parameters:
+        - in: path
+          name: id
+          description: the roomID param to check the room reservations
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: offset
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+        '400':
+          description: bad input parameter
+  /room/{id}/reservations/{reservationId}:
+    delete:
+      summary: removes a reservation for a room
+      parameters:
+        - in: path
+          name: id
+          description: the roomID related to the reservation
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: reservationId
+          description: the reservationID to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '400':
+          description: bad input parameter
+  /room/reservations:
+    post:
+      tags:
+        - admins
+      summary: adds a new reservation for a specific room
+      description: adds a new reservation for a specific room
+      responses:
+        '200':
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationRequest'
+        description: Inventory item to add
+components:
+  schemas:
+    Reservation:
+      type: object
+      required:
+        - type
+        - identifier
+      properties:
+        reservationID:
+          type: string
+          example: 'some-uuid-here'
+        roomID:
+          type: string
+          example: '12'
+        startDate:
+          type: string
+          format: date-time
+          example: '2021-12-04T15:05:05.999Z'
+        endDate:
+          type: string
+          format: date-time
+          example: '2021-12-04T15:05:05.999Z'
+    ReservationRequest:
+      type: object
+      required:
+        - type
+        - identifier
+      properties:
+        roomID:
+          type: string
+          example: '12'
+        startDate:
+          type: string
+          format: date-time
+          example: '2021-12-04T15:05:05.999Z'
+        endDate:
+          type: string
+          format: date-time
+          example: '2021-12-04T15:05:05.999Z'
