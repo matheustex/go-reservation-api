@@ -10,10 +10,6 @@ import (
 	"github.com/matheustex/go-reservation-api/util"
 )
 
-type Response struct {
-	Reservations []model.Reservation `json:"reservations"`
-}
-
 func Handle(input events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	offset, err := strconv.Atoi(input.QueryStringParameters["offset"])
 	if err != nil {
@@ -35,11 +31,7 @@ func Handle(input events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse
 		return util.NewErrorResponse(err)
 	}
 
-	response := Response{
-		Reservations: reservations,
-	}
-
-	return util.NewSuccessResponse(200, response)
+	return util.NewSuccessResponse(200, reservations)
 }
 
 func main() {
