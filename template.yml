@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: go-serverless-lambda-apigw-offline-skeleton
+Resources:
+  Vanilla:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/vanilla
+      Runtime: go1.x
+  Apigw:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: bin/reservations-post
+      Runtime: go1.x
+      Events:
+        SampleEvent:
+          Type: Api
+          Properties:
+            Path: /room/reservations
+            Method: post
+      Environment:
+        Variables:
+          STAGE: stage

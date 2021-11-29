@@ -1,0 +1,100 @@
+service: realworld
+
+frameworkVersion: '>=1.28.0 <2.0.0'
+
+provider:
+  name: aws
+  runtime: go1.x
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-east-1"}
+  environment:
+    STAGE: ${self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:BatchGetItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  reservations-post:
+    handler: bin/reservations-post
+    events:
+      - http:
+          path: room/reservations
+          method: post
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+
+  reservations-get:
+    handler: bin/reservations-get
+    events:
+      - http:
+          path: room/{id}/reservations
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                slug: true
+
+  reservations-delete:
+    handler: bin/reservations-delete
+    events:
+      - http:
+          path: room/{id}/reservations/{reservationId}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                slug: true
+                id: true
+
+resources:
+  Resources:
+    ReservationTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.stage}-reservation
+        AttributeDefinitions:
+          - AttributeName: "reservationID"
+            AttributeType: "S"
+          - AttributeName: "roomID"
+            AttributeType: "S"
+          - AttributeName: "endDate"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "reservationID"
+            KeyType: "HASH"
+          - AttributeName: "roomID"
+            KeyType: "RANGE"
+        GlobalSecondaryIndexes:
+          - IndexName: "ByRoomID"
+            KeySchema:
+              - AttributeName: "roomID"
+                KeyType: "HASH"
+              - AttributeName: "endDate"
+                KeyType: "RANGE"
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 2
+              WriteCapacityUnits: 2
+        BillingMode: PROVISIONED
+        ProvisionedThroughput:
+          ReadCapacityUnits: 2
+          WriteCapacityUnits: 2
