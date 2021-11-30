@@ -13,6 +13,12 @@ In the root directory of this project:
 * `make build`
 * `sls deploy --stage dev`
 
+## Routes
+
+POST https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/reservations
+GET  https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/{roomId}/reservations
+DEL  https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/{roomId}/reservations/{reservationId}
+
 # Design choices
 
 Hi, to address the problem I took the decision to go with a Serverless architecture that will speed some processes and help me deliver the feature.
