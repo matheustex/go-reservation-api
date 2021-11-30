@@ -16,7 +16,9 @@ In the root directory of this project:
 ## Routes
 
 POST https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/reservations
+
 GET  https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/{roomId}/reservations
+
 DEL  https://45y1x9o537.execute-api.us-east-1.amazonaws.com/dev/room/{roomId}/reservations/{reservationId}
 
 # Design choices
